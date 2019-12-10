@@ -245,6 +245,12 @@ public class DefaultElementFactory implements ElementFactory {
 
             case HtmlBody.TAG_NAME:
                 element = new HtmlBody(qualifiedName, page, attributeMap, false);
+                // Force script object creation now to forward onXXX handlers to window.
+                if (page instanceof HtmlPage) {
+                    if (page.getWebClient().getOptions().isJavaScriptEnabled()) {
+                        element.getScriptableObject();
+                    }
+                }
                 break;
 
             case HtmlBold.TAG_NAME:
@@ -757,9 +763,8 @@ public class DefaultElementFactory implements ElementFactory {
 
         if (doBrowserCompatibilityCheck) {
             final JavaScriptConfiguration config =
-                    page.getWebClient().getJavaScriptEngine().getJavaScriptConfiguration();
-            if (config != null
-                    && config.getDomJavaScriptMapping().get(element.getClass()) == null) {
+                    JavaScriptConfiguration.getInstance(page.getWebClient().getBrowserVersion());
+            if (config != null && config.getDomJavaScriptMapping().get(element.getClass()) == null) {
                 return UnknownElementFactory.instance.createElementNS(page, namespaceURI, qualifiedName, attributes);
             }
         }

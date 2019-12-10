@@ -48,13 +48,24 @@ public class ErrorOutputChecker implements TestRule {
             Pattern.compile(".*\\sorg.openqa.selenium.remote.ProtocolHandshake createSession\r?\n"),
             Pattern.compile("INFO(RMATION)?: Detected dialect: W3C\r?\n"),
 
-            // GeckoDriver
-            Pattern.compile("[0-9]*\\sgeckodriver\\sINFO\\sgeckodriver "
-                                + ExternalTest.GECKO_DRIVER_.replace(".", "\\.") + ".*", Pattern.DOTALL),
+            // FF68
+            Pattern.compile("[0-9]*\\smozrunner::runner\\sINFO\\sRunning command:"
+                    + ".*\\n"
+                    + ".*\\r\\n"
+                    + ".*\\r\\n"
+                    + ".*\\r\\n"
+                    + ".*\\r\\n"
+                    + ".*\\r\\n"
+                    + ".*\\r\\n"
+                    + ".*TLS certificate errors will be ignored for this session\\r\\n"),
+
+            // FF60
             Pattern.compile("[0-9]*\\smozrunner::runner\\sINFO\\sRunning command:"
                     + ".*\\n.*\\r\\n.*TLS certificate errors will be ignored for this session\\r\\n"),
+
             Pattern.compile("Unable to read VR Path Registry from .*\\r\\n"
                     + ".*\\r\\n"),
+            Pattern.compile("JavaScript warning: .*\\r\\n"),
 
             // ie
             Pattern.compile("Started InternetExplorerDriver server \\(\\d\\d\\-bit\\)\r?\n"

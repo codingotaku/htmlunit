@@ -4,7 +4,6 @@
     function $(id) {
         return document.getElementById(id);
     }
-    
 
     // https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
     function ab2str(buf) {
@@ -116,23 +115,23 @@
         },
 
         _oncloseListener : function(ce) {
-            log('onCloseListener code: ' + ce.code + '  wasClean: ' + ce.wasClean);
+            log('onCloseListener code: ' + ce.code);
         },
 
         _onclose : function(ce) {
             this._ws = null;
-            log('onClose code: ' + ce.code + '  wasClean: ' + ce.wasClean);
+            log('onClose code: ' + ce.code);
         },
 
         _onerror : function(e) {
             log('onError' + e);
         },
-        
+
         _send: function(data) {
             this._ws.send(data);
         }
     };
-    
+
     window.onload = function() {
         room.init();
     };
@@ -141,6 +140,6 @@
 </head>
 
 <body>
-    <textarea id='log' cols='80' rows='40'></textarea>"
+    <textarea id='log' cols='80' rows='40'></textarea>
 </body>
 </html>

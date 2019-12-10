@@ -14,10 +14,11 @@
  */
 package com.gargoylesoftware.htmlunit.javascript.host.css;
 
-import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.CSS_COMPUTED_BLOCK_IF_NOT_ATTACHED;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.CSS_COMPUTED_NO_Z_INDEX;
+import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.HTMLDEFINITION_INLINE_IN_QUIRKS;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_CLIENTHIGHT_INPUT_17;
+import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_CLIENTHIGHT_INPUT_21;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_CLIENTWIDTH_INPUT_TEXT_143;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_CLIENTWIDTH_INPUT_TEXT_169;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF;
@@ -345,7 +346,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
     private String defaultIfEmpty(final String str, final StyleAttributes.Definition definition,
             final boolean isPixel) {
         if (!getElement().getDomNodeOrDie().isAttachedToPage()
-                && getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+                && getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
             return EMPTY_FINAL;
         }
         if (str == null || str.isEmpty()) {
@@ -364,7 +365,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
      */
     private String defaultIfEmpty(final String str, final String toReturnIfEmptyOrDefault, final String defaultValue) {
         if (!getElement().getDomNodeOrDie().isAttachedToPage()
-                && getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+                && getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
             return EMPTY_FINAL;
         }
         if (str == null || str.isEmpty() || str.equals(defaultValue)) {
@@ -557,8 +558,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
 
     /**
      * Returns the {@code display} attribute.
-     * @param ignoreBlockIfNotAttached is
-     * {@link com.gargoylesoftware.htmlunit.BrowserVersionFeatures#CSS_COMPUTED_BLOCK_IF_NOT_ATTACHED} ignored
+     * @param ignoreBlockIfNotAttached flag
      * @return the {@code display} attribute
      */
     public String getDisplay(final boolean ignoreBlockIfNotAttached) {
@@ -568,13 +568,12 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
         boolean changeValueIfEmpty = false;
         if (!domElem.isAttachedToPage()) {
             final BrowserVersion browserVersion = getBrowserVersion();
-            if (browserVersion.hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+            if (browserVersion.hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
                 return "";
             }
             if (!ignoreBlockIfNotAttached
-                    && (browserVersion.hasFeature(CSS_COMPUTED_BLOCK_IF_NOT_ATTACHED)
-                            || (domElem instanceof HtmlDefinitionDescription
-                                    && browserVersion.hasFeature(HTMLDEFINITION_INLINE_IN_QUIRKS)))) {
+                    && (domElem instanceof HtmlDefinitionDescription
+                         && browserVersion.hasFeature(HTMLDEFINITION_INLINE_IN_QUIRKS))) {
                 changeValueIfEmpty = true;
             }
         }
@@ -613,7 +612,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
      */
     @Override
     public String getFont() {
-        if (getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)
+        if (getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)
                 && getElement().getDomNodeOrDie().isAttachedToPage()) {
             return super.getFont();
         }
@@ -655,7 +654,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
     public String getHeight() {
         final Element elem = getElement();
         if (!elem.getDomNodeOrDie().isAttachedToPage()) {
-            if (getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+            if (getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
                 return "";
             }
             if (getStyleAttribute(HEIGHT, true).isEmpty()) {
@@ -739,7 +738,8 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
             return pixelString(defaultIfEmpty(superMarginX, "0px", null));
         }
         final Element elem = getElement();
-        if (!elem.getDomNodeOrDie().isAttachedToPage() && getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+        if (!elem.getDomNodeOrDie().isAttachedToPage()
+                && getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
             return "";
         }
 
@@ -874,7 +874,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
     public String getTop() {
         final Element elem = getElement();
         if (!elem.getDomNodeOrDie().isAttachedToPage()
-                && getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+                && getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
             return "";
         }
         final String superTop = super.getTop();
@@ -936,7 +936,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
 
         final Element elem = getElement();
         if (!elem.getDomNodeOrDie().isAttachedToPage()) {
-            if (getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+            if (getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
                 return "";
             }
             if (getStyleAttribute(WIDTH, true).isEmpty()) {
@@ -1232,11 +1232,15 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
                 defaultHeight = 20;
             }
             else if (node instanceof HtmlInput && !(node instanceof HtmlHiddenInput)) {
-                if (getBrowserVersion().hasFeature(JS_CLIENTHIGHT_INPUT_17)) {
+                final BrowserVersion browser = getBrowserVersion();
+                if (browser.hasFeature(JS_CLIENTHIGHT_INPUT_17)) {
                     defaultHeight = 17;
                 }
-                else {
+                else if (browser.hasFeature(JS_CLIENTHIGHT_INPUT_21)) {
                     defaultHeight = 21;
+                }
+                else {
+                    defaultHeight = 20;
                 }
             }
             else if (node instanceof HtmlSelect) {
@@ -1793,7 +1797,7 @@ public class ComputedCSSStyleDeclaration extends CSSStyleDeclaration {
     @Override
     public String getStyleAttribute(final Definition style, final boolean getDefaultValueIfEmpty) {
         if (!getElement().getDomNodeOrDie().isAttachedToPage()
-                && getBrowserVersion().hasFeature(CSS_COMPUTED_NO_Z_INDEX)) {
+                && getBrowserVersion().hasFeature(CSS_STYLE_PROP_DISCONNECTED_IS_EMPTY)) {
             return EMPTY_FINAL;
         }
         String value = super.getStyleAttribute(style, getDefaultValueIfEmpty);

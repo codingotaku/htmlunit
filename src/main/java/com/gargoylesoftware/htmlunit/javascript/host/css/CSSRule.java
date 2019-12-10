@@ -16,8 +16,6 @@ package com.gargoylesoftware.htmlunit.javascript.host.css;
 
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.CHROME;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF;
-import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF52;
-import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF60;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.IE;
 
 import org.apache.commons.logging.Log;
@@ -53,7 +51,7 @@ public class CSSRule extends SimpleScriptable {
     /**
      * The rule is a {@code CSSUnknownRule}.
      */
-    @JsxConstant({FF52, IE})
+    @JsxConstant(IE)
     public static final short UNKNOWN_RULE              = org.w3c.dom.css.CSSRule.UNKNOWN_RULE;
 
     /**
@@ -99,22 +97,10 @@ public class CSSRule extends SimpleScriptable {
     public static final short KEYFRAMES_RULE            = 7;
 
     /**
-     * The rule is a {@code CSSKeyframesRule}.
-     */
-    @JsxConstant(FF52)
-    public static final short MOZ_KEYFRAMES_RULE        = 7;
-
-    /**
      * The rule is a {@code CSSKeyframeRule}.
      */
     @JsxConstant
     public static final short KEYFRAME_RULE             = 8;
-
-    /**
-     * The rule is a {@code CSSKeyframeRule}.
-     */
-    @JsxConstant(FF52)
-    public static final short MOZ_KEYFRAME_RULE         = 8;
 
     /**
      * The rule is a {@code CSSNamespaceRule}.
@@ -153,7 +139,7 @@ public class CSSRule extends SimpleScriptable {
     /**
      * Creates a new instance.
      */
-    @JsxConstructor({CHROME, FF60})
+    @JsxConstructor({CHROME, FF})
     public CSSRule() {
         stylesheet_ = null;
         rule_ = null;

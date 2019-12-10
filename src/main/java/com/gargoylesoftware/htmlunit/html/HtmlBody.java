@@ -50,11 +50,6 @@ public class HtmlBody extends HtmlElement {
         super(qualifiedName, page, attributes);
 
         temporary_ = temporary;
-
-        // Force script object creation now to forward onXXX handlers to window.
-        if (getOwnerDocument() instanceof HtmlPage) {
-            getScriptableObject();
-        }
     }
 
     /**

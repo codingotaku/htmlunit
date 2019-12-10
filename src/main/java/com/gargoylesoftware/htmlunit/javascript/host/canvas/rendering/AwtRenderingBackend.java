@@ -14,6 +14,7 @@
  */
 package com.gargoylesoftware.htmlunit.javascript.host.canvas.rendering;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -41,6 +42,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.gargoylesoftware.htmlunit.util.StringUtils;
+
 /**
  * The default implementation of {@link RenderingBackend}.
  *
@@ -54,6 +57,7 @@ public class AwtRenderingBackend implements RenderingBackend {
     private final Graphics2D graphics2D_;
 
     private AffineTransform transformation_;
+    private float globalAlpha_;
     private int lineWidth_;
     private Color fillColor_;
     private Color strokeColor_;
@@ -89,6 +93,27 @@ public class AwtRenderingBackend implements RenderingBackend {
         strokeColor_ = Color.black;
         lineWidth_ = 1;
         transformation_ = new AffineTransform();
+        setGlobalAlpha(1.0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getGlobalAlpha() {
+        return globalAlpha_;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setGlobalAlpha(final double globalAlpha) {
+        if (globalAlpha >= 0 && globalAlpha <= 1) {
+            globalAlpha_ = (float) globalAlpha;
+            final AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, globalAlpha_);
+            graphics2D_.setComposite(composite);
+        }
     }
 
     /**
@@ -97,6 +122,34 @@ public class AwtRenderingBackend implements RenderingBackend {
     @Override
     public void beginPath() {
         subPaths_.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void ellipse(final double x, final double y,
+            final double radiusX, final double radiusY,
+            final double rotation, final double startAngle, final double endAngle,
+            final boolean anticlockwise) {
+        final Path2D subPath = getCurrentSubPath();
+        if (subPath != null) {
+            final Point2D p = transformation_.transform(new Point2D.Double(x, y), null);
+            final double startAngleDegree = 360 - (startAngle * 180 / Math.PI);
+            final double endAngleDegree = 360 - (endAngle * 180 / Math.PI);
+
+            double extendAngle = startAngleDegree - endAngleDegree;
+            extendAngle = Math.min(360, Math.abs(extendAngle));
+            if (anticlockwise && extendAngle < 360) {
+                extendAngle = extendAngle - 360;
+            }
+
+            final AffineTransform transformation = new AffineTransform();
+            transformation.rotate(rotation, p.getX(), p.getY());
+            final Arc2D arc = new Arc2D.Double(p.getX() - radiusX, p.getY() - radiusY, radiusX * 2, radiusY * 2,
+                                            startAngleDegree, extendAngle * -1, Arc2D.OPEN);
+            subPath.append(transformation.createTransformedShape(arc), false);
+        }
     }
 
     /**
@@ -123,8 +176,8 @@ public class AwtRenderingBackend implements RenderingBackend {
         final Path2D subPath = getCurrentSubPath();
         if (subPath != null) {
             final Point2D p = transformation_.transform(new Point2D.Double(x, y), null);
-            final double startAngleDegree = startAngle * 180 / Math.PI;
-            final double endAngleDegree = endAngle * 180 / Math.PI;
+            final double startAngleDegree = 360 - (startAngle * 180 / Math.PI);
+            final double endAngleDegree = 360 - (endAngle * 180 / Math.PI);
 
             double extendAngle = startAngleDegree - endAngleDegree;
             extendAngle = Math.min(360, Math.abs(extendAngle));
@@ -328,29 +381,26 @@ public class AwtRenderingBackend implements RenderingBackend {
     @Override
     public void setStrokeStyle(final String strokeStyle) {
         final String tmpFillStyle = strokeStyle.replaceAll("\\s", "");
-        Color color = null;
-        if (tmpFillStyle.startsWith("rgb(")) {
-            final String[] colors = tmpFillStyle.substring(4, tmpFillStyle.length() - 1).split(",");
-            color = new Color(Integer.parseInt(colors[0]), Integer.parseInt(colors[1]), Integer.parseInt(colors[2]));
+        Color color = StringUtils.findColorRGB(tmpFillStyle);
+        if (color == null) {
+            color = StringUtils.findColorRGBA(tmpFillStyle);
         }
-        else if (tmpFillStyle.startsWith("rgba(")) {
-            final String[] colors = tmpFillStyle.substring(5, tmpFillStyle.length() - 1).split(",");
-            color = new Color(Integer.parseInt(colors[0]), Integer.parseInt(colors[1]), Integer.parseInt(colors[2]),
-                (int) (Float.parseFloat(colors[3]) * 255));
-        }
-        else if (tmpFillStyle.length() > 0 && tmpFillStyle.charAt(0) == '#') {
-            color = Color.decode(tmpFillStyle);
-        }
-        else {
-            try {
-                final Field f = Color.class.getField(tmpFillStyle);
-                color = (Color) f.get(null);
+
+        if (color == null) {
+            if (tmpFillStyle.length() > 0 && tmpFillStyle.charAt(0) == '#') {
+                color = Color.decode(tmpFillStyle);
             }
-            catch (final Exception e) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Can not find color '" + tmpFillStyle + '\'');
+            else {
+                try {
+                    final Field f = Color.class.getField(tmpFillStyle);
+                    color = (Color) f.get(null);
                 }
-                color = Color.black;
+                catch (final Exception e) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Can not find color '" + tmpFillStyle + '\'');
+                    }
+                    color = Color.black;
+                }
             }
         }
         strokeColor_ = color;
@@ -472,12 +522,14 @@ public class AwtRenderingBackend implements RenderingBackend {
 
     private static final class SaveState {
         private AffineTransform transformation_;
+        private float globalAlpha_;
         private int lineWidth_;
         private Color fillColor_;
         private Color strokeColor_;
 
         private SaveState(final AwtRenderingBackend backend) {
             transformation_ = backend.transformation_;
+            globalAlpha_ = backend.globalAlpha_;
             lineWidth_ = backend.lineWidth_;
             fillColor_ = backend.fillColor_;
             strokeColor_ = backend.strokeColor_;
@@ -485,6 +537,7 @@ public class AwtRenderingBackend implements RenderingBackend {
 
         private void applyOn(final AwtRenderingBackend backend) {
             backend.transformation_ = transformation_;
+            backend.globalAlpha_ = globalAlpha_;
             backend.lineWidth_ = lineWidth_;
             backend.fillColor_ = fillColor_;
             backend.strokeColor_ = strokeColor_;

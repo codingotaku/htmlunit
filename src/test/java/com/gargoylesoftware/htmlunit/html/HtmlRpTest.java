@@ -34,8 +34,8 @@ public class HtmlRpTest extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts(CHROME = {"", "none", "none"},
-            FF = {"none", "none", "none"},
+    @Alerts(DEFAULT = {"", "none", "none"},
+            FF60 = {"none", "none", "none"},
             IE = {"inline", "inline", "inline"})
     public void defaultStyle() throws Exception {
         final String html = "<html><head>\n"

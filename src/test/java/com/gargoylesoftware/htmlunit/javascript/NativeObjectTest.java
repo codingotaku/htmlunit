@@ -14,7 +14,7 @@
  */
 package com.gargoylesoftware.htmlunit.javascript;
 
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF;
+import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF60;
 import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.IE;
 
 import org.junit.Test;
@@ -33,6 +33,7 @@ import com.gargoylesoftware.htmlunit.WebDriverTestCase;
  * @author Frank Danek
  * @author Ahmed Ashour
  * @author Natasha Lazarova
+ * @author Ronald Brill
  */
 @RunWith(BrowserRunner.class)
 public class NativeObjectTest extends WebDriverTestCase {
@@ -183,11 +184,11 @@ public class NativeObjectTest extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts(DEFAULT = "function () {}",
-            CHROME = "function () { [native code] }",
-            FF = "function () {\n}",
+    @Alerts(CHROME = "function () { [native code] }",
+            FF60 = "function () {\n}",
+            FF68 = "function () {\n    [native code]\n}",
             IE = "\nfunction() {\n    [native code]\n}\n")
-    @NotYetImplemented({FF, IE})
+    @NotYetImplemented({FF60, IE})
     public void proto() throws Exception {
         final String html = ""
             + "<html><head>\n"

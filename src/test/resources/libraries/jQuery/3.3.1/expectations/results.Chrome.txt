@@ -768,7 +768,7 @@
 768. ajax: #13292 - jQuery.ajax() - converter is bypassed for 204 requests (3) [ae3814fb]
 769. ajax: #13388 - jQuery.ajax() - responseXML (3) [5fc9540b]
 770. ajax: #13922 - jQuery.ajax() - converter is bypassed for HEAD requests (3) [5a6e2185]
-771. ajax: #14379 - jQuery.ajax() on unload (1) [d38a90c9]
+771. ajax: #14379 - jQuery.ajax() on unload (1, 0, 1) [d38a90c9]
 772. ajax: #14683 - jQuery.ajax() - Exceptions thrown synchronously by xhr.send should be caught (4) [3ef5bd03]
 773. ajax: gh-2587 - when content-type not xml, but looks like one (1) [3e172a39]
 774. ajax: gh-2587 - when content-type not xml, but looks like one (1) [84ce1d07]

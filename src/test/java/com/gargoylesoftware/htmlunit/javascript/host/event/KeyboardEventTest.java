@@ -14,7 +14,7 @@
  */
 package com.gargoylesoftware.htmlunit.javascript.host.event;
 
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF60;
+import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF68;
 
 import java.util.Arrays;
 
@@ -28,6 +28,7 @@ import org.openqa.selenium.WebElement;
 import com.gargoylesoftware.htmlunit.BrowserRunner;
 import com.gargoylesoftware.htmlunit.BrowserRunner.Alerts;
 import com.gargoylesoftware.htmlunit.BrowserRunner.BuggyWebDriver;
+import com.gargoylesoftware.htmlunit.BrowserRunner.NotYetImplemented;
 import com.gargoylesoftware.htmlunit.WebDriverTestCase;
 
 /**
@@ -135,7 +136,7 @@ public class KeyboardEventTest extends WebDriverTestCase {
      */
     @Test
     @Alerts("32, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, ")
-    @BuggyWebDriver(FF60)
+    @BuggyWebDriver(FF = "0, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, ")
     public void keyCodes_keyup() throws Exception {
         final String html = "<html><head>\n"
             + "<script>\n"
@@ -191,7 +192,7 @@ public class KeyboardEventTest extends WebDriverTestCase {
      */
     @Test
     @Alerts("32, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, ")
-    @BuggyWebDriver(FF60)
+    @BuggyWebDriver(FF = "0, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, ")
     public void keyCodes_keydown() throws Exception {
         final String html = "<html><head>\n"
             + "<script>\n"
@@ -304,7 +305,8 @@ public class KeyboardEventTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = {"13", "13", "13"},
-            FF = {"0", "13", "13"})
+            FF60 = {"0", "13", "13"})
+    @NotYetImplemented(FF68)
     public void keyCodeEnter_keypress() throws Exception {
         final String html = "<html>\n"
             + "<head>\n"
@@ -333,7 +335,7 @@ public class KeyboardEventTest extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts(DEFAULT = {"keydown:16,0,16,Shift,undefined,ShiftLeft,true",
+    @Alerts(CHROME = {"keydown:16,0,16,Shift,undefined,ShiftLeft,true",
                     "keydown:65,0,65,A,undefined,KeyA,true",
                     "keypress:65,65,65,A,undefined,KeyA,true",
                     "keyup:65,0,65,A,undefined,KeyA,true",
@@ -372,12 +374,63 @@ public class KeyboardEventTest extends WebDriverTestCase {
                     "keydown:190,0,190,.,.,undefined,false",
                     "keypress:46,46,46,.,.,undefined,false",
                     "keyup:190,0,190,.,.,undefined,false",
-                    "keydown:13,0,13,Enter,\n,undefined,false",
-                    "keypress:13,13,13,Enter,\n,undefined,false",
-                    "keyup:13,0,13,Enter,\n,undefined,false"}
+                    "keydown:13,0,13,Enter,\\n,undefined,false",
+                    "keypress:13,13,13,Enter,\\n,undefined,false",
+                    "keyup:13,0,13,Enter,\\n,undefined,false"}
             )
     // https://github.com/SeleniumHQ/selenium/issues/2531
-    @BuggyWebDriver
+    @BuggyWebDriver(CHROME = {"keydown:16,0,16,Shift,undefined,ShiftLeft,false",
+                            "keydown:65,0,65,A,undefined,KeyA,true",
+                            "keypress:65,65,65,A,undefined,KeyA,true",
+                            "keyup:65,0,65,A,undefined,KeyA,true",
+                            "keyup:16,0,16,Shift,undefined,ShiftLeft,false",
+                            "keydown:65,0,65,a,undefined,KeyA,false",
+                            "keypress:97,97,97,a,undefined,KeyA,false",
+                            "keyup:65,0,65,a,undefined,KeyA,false",
+                            "keydown:190,0,190,.,undefined,Period,false",
+                            "keypress:46,46,46,.,undefined,Period,false",
+                            "keyup:190,0,190,.,undefined,Period,false",
+                            "keydown:13,0,13,Enter,undefined,Enter,false",
+                            "keypress:13,13,13,Enter,undefined,Enter,false",
+                            "keyup:13,0,13,Enter,undefined,Enter,false"},
+                    FF60 = {  "keydown:65,0,65,A,undefined,,false",
+                            "keypress:0,65,65,A,undefined,,false",
+                            "keyup:65,0,65,A,undefined,,false",
+                            "keydown:65,0,65,a,undefined,,false",
+                            "keypress:0,97,97,a,undefined,,false",
+                            "keyup:65,0,65,a,undefined,,false",
+                            "keydown:190,0,190,.,undefined,,false",
+                            "keypress:0,46,46,.,undefined,,false",
+                            "keyup:190,0,190,.,undefined,,false",
+                            "keydown:13,0,13,Enter,undefined,,false",
+                            "keypress:13,0,13,Enter,undefined,,false",
+                            "keyup:13,0,13,Enter,undefined,,false"},
+                    FF68 = {  "keydown:65,0,65,A,undefined,,false",
+                            "keypress:65,65,65,A,undefined,,false",
+                            "keyup:65,0,65,A,undefined,,false",
+                            "keydown:65,0,65,a,undefined,,false",
+                            "keypress:97,97,97,a,undefined,,false",
+                            "keyup:65,0,65,a,undefined,,false",
+                            "keydown:190,0,190,.,undefined,,false",
+                            "keypress:46,46,46,.,undefined,,false",
+                            "keyup:190,0,190,.,undefined,,false",
+                            "keydown:13,0,13,Enter,undefined,,false",
+                            "keypress:13,13,13,Enter,undefined,,false",
+                            "keyup:13,0,13,Enter,undefined,,false"},
+                    IE = {  "keydown:16,0,16,Shift,,undefined,false",
+                            "keydown:65,0,65,A,A,undefined,false",
+                            "keypress:65,65,65,A,A,undefined,false",
+                            "keyup:65,0,65,a,a,undefined,false",
+                            "keyup:16,0,16,Shift,,undefined,false",
+                            "keydown:65,0,65,a,a,undefined,false",
+                            "keypress:97,97,97,a,a,undefined,false",
+                            "keyup:65,0,65,a,a,undefined,false",
+                            "keydown:190,0,190,.,.,undefined,false",
+                            "keypress:46,46,46,.,.,undefined,false",
+                            "keyup:190,0,190,.,.,undefined,false",
+                            "keydown:13,0,13,Enter,\\n,undefined,false",
+                            "keypress:13,13,13,\\r,\\r,undefined,false",
+                            "keyup:13,0,13,Enter,\\n,undefined,false"})
     public void which() throws Exception {
         final String html
             = "<html><head></head><body>\n"
@@ -385,9 +438,11 @@ public class KeyboardEventTest extends WebDriverTestCase {
             + "<script>\n"
             + "function handler(e) {\n"
             + "  e = e ? e : window.event;\n"
-            + "  document.getElementById('myTextarea').value "
-            + "+= e.type + ':' + e.keyCode + ',' + e.charCode + ',' + e.which + ',' "
-            + "+ e.key + ',' + e.char + ',' + e.code + ',' + e.shiftKey + '\\r\\n';\n"
+            + "  var log = e.type + ':' + e.keyCode + ',' + e.charCode + ',' + e.which + ',' "
+                            + "+ e.key + ',' + e.char + ',' + e.code + ',' + e.shiftKey;\n"
+            + "  log = log.replace(/\\r/g, '\\\\r');\n"
+            + "  log = log.replace(/\\n/g, '\\\\n');\n"
+            + "  document.getElementById('myTextarea').value += log + '\\n';"
             + "}\n"
             + "document.getElementById('keyId').onkeyup = handler;\n"
             + "document.getElementById('keyId').onkeydown = handler;\n"
@@ -400,8 +455,7 @@ public class KeyboardEventTest extends WebDriverTestCase {
         final WebDriver driver = loadPage2(html);
         driver.findElement(By.id("keyId")).sendKeys(keysToSend);
 
-        final String[] actual = driver.findElement(By.id("myTextarea")).getAttribute("value").split("\r\n");
+        final String[] actual = driver.findElement(By.id("myTextarea")).getAttribute("value").split("\n");
         assertEquals(Arrays.asList(getExpectedAlerts()).toString(), Arrays.asList(actual).toString());
     }
-
 }

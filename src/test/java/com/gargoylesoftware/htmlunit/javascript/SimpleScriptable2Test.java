@@ -15,7 +15,7 @@
 package com.gargoylesoftware.htmlunit.javascript;
 
 import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.CHROME;
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF;
+import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF60;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -292,6 +292,17 @@ public class SimpleScriptable2Test extends WebDriverTestCase {
     }
 
     /**
+     * Setting the property works in FF.
+     *
+     * @throws Exception if the test fails
+     */
+    @Test
+    @Alerts("0")
+    public void set_ReadOnly_style_length() throws Exception {
+        set_ReadOnly("document.body.style.length");
+    }
+
+    /**
      * All functions seem to be able to be set.
      *
      * @throws Exception if the test fails
@@ -326,8 +337,9 @@ public class SimpleScriptable2Test extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = {"function", "true", "function get length() {\n    [native code]\n}", "0", "0"},
             CHROME = {"undefined", "false", "undefined", "exception"},
+            FF68 = {"function", "true", "function length() {\n    [native code]\n}", "0", "0"},
             IE = {"function", "true", "\nfunction length() {\n    [native code]\n}\n", "0", "0"})
-    @NotYetImplemented({CHROME, FF})
+    @NotYetImplemented({CHROME, FF60})
     public void lookupGetter() throws Exception {
         final String html = HtmlPageTest.STANDARDS_MODE_PREFIX_
             + "<html><head><script>\n"

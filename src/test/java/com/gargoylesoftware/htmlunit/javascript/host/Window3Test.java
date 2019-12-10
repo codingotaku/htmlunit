@@ -83,7 +83,7 @@ public class Window3Test extends WebDriverTestCase {
      */
     @Test
     @Alerts({"null", "one", "two", "three"})
-    @BuggyWebDriver(IE)
+    @BuggyWebDriver(IE = {"undefined", "one", "two", "three"})
     public void opener() throws Exception {
         final URL urlThird = new URL(URL_FIRST, "third/");
 
@@ -310,7 +310,7 @@ public class Window3Test extends WebDriverTestCase {
      */
     @Test
     @Alerts({"false", "false", "true"})
-    @BuggyWebDriver(IE)
+    @BuggyWebDriver(IE = {"false", "false", "true"})
     public void closed() throws Exception {
         final String html = HtmlPageTest.STANDARDS_MODE_PREFIX_
             + "<html><head><title>foo</title><script>\n"
@@ -2241,6 +2241,17 @@ public class Window3Test extends WebDriverTestCase {
                 "property: prevented=true returnValue: true -> return true",
                 "listener: prevented=true returnValue: true -> x (x)",
                 "listener: prevented=true returnValue: x -> null (null)"},
+            FF68 = {"listener: stop propagation & return false",
+                "FIRED a1",
+                "listener: return true",
+                "property: return false",
+                "listener: return true",
+                "listener: prevented=false returnValue: true -> false (false)",
+                "listener: prevented=true returnValue: false -> true (false)",
+                "listener: prevented=true returnValue: false -> preventDefault() (false)",
+                "property: prevented=true returnValue: false -> return true",
+                "listener: prevented=true returnValue: false -> x (false)",
+                "listener: prevented=true returnValue: false -> null (false)"},
             CHROME = {"listener: stop propagation & return false",
                 "FIRED a1",
                 "listener: return true",

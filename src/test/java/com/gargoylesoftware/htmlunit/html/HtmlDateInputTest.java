@@ -14,8 +14,6 @@
  */
 package com.gargoylesoftware.htmlunit.html;
 
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.CHROME;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -41,7 +39,7 @@ public class HtmlDateInputTest extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = {"text-datetime", "text-Date"},
             CHROME = {"text-datetime", "date-Date"},
-            FF60 = {"text-datetime", "date-Date"})
+            FF = {"text-datetime", "date-Date"})
     public void type() throws Exception {
         final String html =
               "<html>\n"
@@ -68,7 +66,8 @@ public class HtmlDateInputTest extends WebDriverTestCase {
      */
     @Test
     @Alerts("2018-03-22")
-    @BuggyWebDriver(CHROME)
+    @BuggyWebDriver(CHROME = "80322-02-01",
+                IE = "")
     public void typeInto() throws Exception {
         final String html =
               "<html>\n"

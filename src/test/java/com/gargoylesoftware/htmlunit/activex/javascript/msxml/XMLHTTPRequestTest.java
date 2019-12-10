@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,6 +57,14 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
  */
 @RunWith(BrowserRunner.class)
 public class XMLHTTPRequestTest extends WebDriverTestCase {
+
+    /**
+     * Closes the real IE; otherwise tests are failing because of cached responses.
+     */
+    @After
+    public void shutDownRealBrowsersAfter() {
+        shutDownRealIE();
+    }
 
     /**
      * @throws Exception if the test fails
@@ -358,9 +367,9 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
     @Alerts(DEFAULT = "no ActiveX",
             IE = {"exception-created",
                    "",
-                   "<root/>\r\n",
+                   "<root/>\\r\\n",
                    "",
-                   "<root/>\r\n"})
+                   "<root/>\\r\\n"})
     public void responseXML_sync() throws Exception {
         property_lifecycleSync("responseXML.xml");
     }
@@ -370,7 +379,7 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = "no ActiveX",
-            IE = {"1:", "1:", "2:", "3:", "4:<root/>\r\n"})
+            IE = {"1:", "1:", "2:", "3:", "4:<root/>\\r\\n"})
     public void responseXML_async() throws Exception {
         property_lifecycleAsync("responseXML.xml");
     }
@@ -432,7 +441,7 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = "no ActiveX",
-            IE = "<root/>\r\n")
+            IE = "<root/>\\r\\n")
     public void responseXML_contentTypeApplicationXML() throws Exception {
         final String html = ""
             + "  var xhr;\n"
@@ -443,7 +452,10 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
             + "      xhr.open(\"GET\", \"" + URL_SECOND + "\", false);\n"
             + "      xhr.send();\n"
             + "      try {\n"
-            + "        alert(xhr.responseXML.xml);\n"
+            + "        var txt = xhr.responseXML.xml;\n"
+            + "        txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "        txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "        alert(txt);\n"
             + "      } catch(e) { alert('exception-xml'); }\n"
             + "    } catch(e) { alert('exception'); }\n"
             + "  }\n"
@@ -459,7 +471,7 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = "no ActiveX",
-            IE = "<root>ol\u00E9</root>\r\n")
+            IE = "<root>ol\u00E9</root>\\r\\n")
     public void responseXML_defaultEncodingIsUTF8() throws Exception {
         final String html = ""
             + "  var xhr;\n"
@@ -470,7 +482,10 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
             + "      xhr.open('GET', '" + URL_SECOND + "', false);\n"
             + "      xhr.send();\n"
             + "      try {\n"
-            + "        alert(xhr.responseXML.xml);\n"
+            + "        var txt = xhr.responseXML.xml;\n"
+            + "        txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "        txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "        alert(txt);\n"
             + "      } catch(e) { alert('exception-xml'); }\n"
             + "    } catch(e) { alert('exception'); }\n"
             + "  }\n"
@@ -582,7 +597,7 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = "no ActiveX",
-            IE = {"4:200 <root/> <root/>\r\n",
+            IE = {"4:200 <root/> <root/>\\r\\n",
                    "0:ex status ex text ex xml"})
     public void abort_sentSync() throws Exception {
         final String test = ""
@@ -629,9 +644,9 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
     @Alerts(DEFAULT = "no ActiveX",
             IE = {"exception-created",
                    "exception-opened",
-                   "Date XYZ GMT\r\n"
-                   + "Content-Type: text/xml;charset=iso-8859-1\r\n"
-                   + "Transfer-Encoding: chunked\r\nServer: Jetty(XXX)\r\n\r\n"})
+                   "Date XYZ GMT\\r\\n"
+                   + "Content-Type: text/xml;charset=iso-8859-1\\r\\n"
+                   + "Transfer-Encoding: chunked\\r\\nServer: Jetty(XXX)\\r\\n\\r\\n"})
     public void getAllResponseHeaders() throws Exception {
         final String test = ""
             // create
@@ -646,8 +661,12 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
             // send
             + "xhr.send();\n"
             + "try {\n"
-            + "  alert(xhr.getAllResponseHeaders().replace(/Jetty\\(.*\\)/, 'Jetty(XXX)')"
-            + ".replace(/Date.*GMT/, 'Date XYZ GMT'));\n"
+            + "  var txt = xhr.getAllResponseHeaders();\n"
+            + "  txt = txt.replace(/Jetty\\(.*\\)/, 'Jetty(XXX)');\n"
+            + "  txt = txt.replace(/Date.*GMT/, 'Date XYZ GMT');\n"
+            + "  txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "  txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "  alert(txt);\n"
             + "} catch(e) { alert('exception-sent'); }\n";
 
         tester(test, "<root/>");
@@ -1335,27 +1354,42 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
         final String test = ""
             // create
             + "try {\n"
-            + "  alert(xhr." + property + ");\n"
+            + "  var txt = '' + xhr." + property + ";\n"
+            + "  txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "  txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "  alert(txt);\n"
             + "} catch(e) { alert('exception-created'); }\n"
             // open
             + "xhr.open(\"GET\", \"" + URL_SECOND + "\", false);\n"
             + "try {\n"
-            + "  alert(xhr." + property + ");\n"
+            + "  txt = '' + xhr." + property + ";\n"
+            + "  txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "  txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "  alert(txt);\n"
             + "} catch(e) { alert('exception-opened'); }\n"
             // send
             + "xhr.send();\n"
             + "try {\n"
-            + "  alert(xhr." + property + ");\n"
+            + "  txt = '' + xhr." + property + ";\n"
+            + "  txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "  txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "  alert(txt);\n"
             + "} catch(e) { alert('exception-sent'); }\n"
             // re-open
             + "xhr.open(\"GET\", \"" + URL_SECOND + "\", false);\n"
             + "try {\n"
-            + "  alert(xhr." + property + ");\n"
+            + "  txt = '' + xhr." + property + ";\n"
+            + "  txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "  txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "  alert(txt);\n"
             + "} catch(e) { alert('exception-reopened'); }\n"
             // send
             + "xhr.send();\n"
             + "try {\n"
-            + "  alert(xhr." + property + ");\n"
+            + "  txt = '' + xhr." + property + ";\n"
+            + "  txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "  txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "  alert(txt);\n"
             + "} catch(e) { alert('exception-sent'); }\n";
 
         tester(test);
@@ -1365,7 +1399,10 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
         final String test = ""
             + "xhr.onreadystatechange = function() {\n"
             + "  try {\n"
-            + "    alert(xhr.readyState + ':' + xhr." + property + ");\n"
+            + "    var txt = xhr.readyState + ':' + xhr." + property + ";\n"
+            + "    txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "    txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "    alert(txt);\n"
             + "  } catch(e) { alert(xhr.readyState + ':exception-async'); }\n"
             + "};\n"
             // open
@@ -1406,14 +1443,17 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
             + "      msg += ' ' + r.responseText;\n"
             + "    } catch(e) { msg += ' ex text'; }\n"
             + "    try {\n"
-            + "      msg += ' ' + r.responseXML.xml;\n"
+            + "      var txt = r.responseXML.xml;\n"
+            + "      txt = txt.replace(/\\r/g, '\\\\r');\n"
+            + "      txt = txt.replace(/\\n/g, '\\\\n');\n"
+            + "      msg += ' ' + txt;\n"
             + "    } catch(e) { msg += ' ex xml'; }\n"
             + "    alert(msg);\n"
             + "  }\n"
             + CREATE_XMLHTTPREQUEST_FUNCTION;
 
         getMockWebConnection().setResponse(URL_SECOND, xml, MimeType.TEXT_XML);
-        loadPageWithAlerts2(createTestHTML(html), URL_FIRST, 6 * DEFAULT_WAIT_TIME);
+        loadPageWithAlerts2(createTestHTML(html), URL_FIRST, 10 * DEFAULT_WAIT_TIME);
     }
 
     private void tester_bounce(final String test) throws Exception {
@@ -1447,7 +1487,7 @@ public class XMLHTTPRequestTest extends WebDriverTestCase {
         final Map<String, Class<? extends Servlet>> servlets = new HashMap<>();
         servlets.put("/bounce", BounceServlet.class);
 
-        loadPageWithAlerts2(createTestHTML(html), servlets);
+        loadPageWithAlerts2(createTestHTML(html), URL_FIRST, DEFAULT_WAIT_TIME * 2, servlets);
     }
 
     /**

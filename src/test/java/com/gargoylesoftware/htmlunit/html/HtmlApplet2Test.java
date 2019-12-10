@@ -38,9 +38,9 @@ public class HtmlApplet2Test extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts(DEFAULT = {"[object HTMLAppletElement]", "[object HTMLCollection]", "1", "[object HTMLAppletElement]"},
-            CHROME = {"[object HTMLUnknownElement]", "[object HTMLCollection]", "0", "undefined"},
-            FF60 = {"[object HTMLUnknownElement]", "[object NodeList]", "0", "undefined"})
+    @Alerts(DEFAULT = {"[object HTMLUnknownElement]", "[object HTMLCollection]", "0", "undefined"},
+            FF60 = {"[object HTMLUnknownElement]", "[object NodeList]", "0", "undefined"},
+            IE = {"[object HTMLAppletElement]", "[object HTMLCollection]", "1", "[object HTMLAppletElement]"})
     public void simpleScriptable() throws Exception {
         final String html = "<html><head>\n"
             + "<script>\n"
@@ -57,8 +57,7 @@ public class HtmlApplet2Test extends WebDriverTestCase {
 
         final WebDriver driver = loadPageWithAlerts2(html);
         if (driver instanceof HtmlUnitDriver) {
-            if (getBrowserVersion().isChrome()
-                    || (getBrowserVersion().isFirefox() && !getBrowserVersion().isFirefox52())) {
+            if (getBrowserVersion().isChrome() || getBrowserVersion().isFirefox()) {
                 final HtmlPage page = (HtmlPage) getWebWindowOf((HtmlUnitDriver) driver).getEnclosedPage();
                 assertTrue(HtmlUnknownElement.class.isInstance(page.getHtmlElementById("myId")));
             }

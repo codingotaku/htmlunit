@@ -24,11 +24,11 @@ import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.CSS_VERTICAL_
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.CSS_ZINDEX_TYPE_INTEGER;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_STYLE_SET_PROPERTY_IMPORTANT_IGNORES_CASE;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_STYLE_UNSUPPORTED_PROPERTY_GETTER;
-import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_STYLE_VALUES_LOWERCASE;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_STYLE_WORD_SPACING_ACCEPTS_PERCENT;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_STYLE_WRONG_INDEX_RETURNS_UNDEFINED;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.CHROME;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF;
+import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF60;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.IE;
 import static com.gargoylesoftware.htmlunit.javascript.host.css.StyleAttributes.Definition.ACCELERATOR;
 import static com.gargoylesoftware.htmlunit.javascript.host.css.StyleAttributes.Definition.BACKGROUND;
@@ -131,8 +131,6 @@ import com.gargoylesoftware.htmlunit.WebAssert;
 import com.gargoylesoftware.htmlunit.css.StyleElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.SimpleScriptable;
-import com.gargoylesoftware.htmlunit.javascript.configuration.CanSetReadOnly;
-import com.gargoylesoftware.htmlunit.javascript.configuration.CanSetReadOnlyStatus;
 import com.gargoylesoftware.htmlunit.javascript.configuration.JsxClass;
 import com.gargoylesoftware.htmlunit.javascript.configuration.JsxConstructor;
 import com.gargoylesoftware.htmlunit.javascript.configuration.JsxFunction;
@@ -1428,7 +1426,6 @@ public class CSSStyleDeclaration extends SimpleScriptable {
      * @return the {@code length} property
      */
     @JsxGetter
-    @CanSetReadOnly(CanSetReadOnlyStatus.IGNORE)
     public int getLength() {
         return getStyleMap().size();
     }
@@ -1683,8 +1680,7 @@ public class CSSStyleDeclaration extends SimpleScriptable {
         final StyleElement element = getStyleElement(string);
         if (element != null && element.getValue() != null) {
             final String value = element.getValue();
-            if (!value.contains("url")
-                    && getBrowserVersion().hasFeature(JS_STYLE_VALUES_LOWERCASE)) {
+            if (!value.contains("url")) {
                 return value.toLowerCase(Locale.ROOT);
             }
             return value;
@@ -2574,7 +2570,7 @@ public class CSSStyleDeclaration extends SimpleScriptable {
      * @param name the name of the property to retrieve
      * @return the value
      */
-    @JsxFunction(FF)
+    @JsxFunction(FF60)
     public CSSValue getPropertyCSSValue(final String name) {
         if (LOG.isInfoEnabled()) {
             LOG.info("getPropertyCSSValue(" + name + "): getPropertyCSSValue support is experimental");
@@ -3020,6 +3016,14 @@ public class CSSStyleDeclaration extends SimpleScriptable {
             i = i * 24;
         }
         return i;
+    }
+
+    @Override
+    protected boolean isReadOnlySettable(final String name, final Object value) {
+        if ("length".equals(name)) {
+            return false; //ignore
+        }
+        return super.isReadOnlySettable(name, value);
     }
 
     /**

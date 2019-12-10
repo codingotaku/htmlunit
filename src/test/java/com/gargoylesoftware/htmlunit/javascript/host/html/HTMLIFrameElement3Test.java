@@ -183,7 +183,10 @@ public class HTMLIFrameElement3Test extends WebDriverTestCase {
      * @throws Exception if an error occurs
      */
     @Test
-    @Alerts({"false", "false", "true", "true", "true", "object", "object"})
+    @Alerts(DEFAULT = {"false", "false", "true", "true", "true", "object", "object"},
+            FF68 = {"false", "false", "true", "false", "false", "object", "undefined"},
+            FF60 = {"false", "false", "true", "false", "true", "undefined", "undefined"})
+    @NotYetImplemented(FF)
     public void writeToIFrame() throws Exception {
         final String html
             = "<!DOCTYPE html>\n"

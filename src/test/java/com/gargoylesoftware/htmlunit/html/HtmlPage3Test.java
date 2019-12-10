@@ -14,7 +14,7 @@
  */
 package com.gargoylesoftware.htmlunit.html;
 
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF60;
+import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF;
 import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.IE;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
@@ -30,7 +30,6 @@ import org.openqa.selenium.WebElement;
 
 import com.gargoylesoftware.htmlunit.BrowserRunner;
 import com.gargoylesoftware.htmlunit.BrowserRunner.Alerts;
-import com.gargoylesoftware.htmlunit.BrowserRunner.BuggyWebDriver;
 import com.gargoylesoftware.htmlunit.BrowserRunner.NotYetImplemented;
 import com.gargoylesoftware.htmlunit.WebDriverTestCase;
 import com.gargoylesoftware.htmlunit.util.MimeType;
@@ -206,7 +205,6 @@ public class HtmlPage3Test extends WebDriverTestCase {
      */
     @Test
     @Alerts({"[object HTMLInputElement]", "1"})
-    @BuggyWebDriver(IE)
     public void write_getElementById_afterParsing() throws Exception {
         final String html = "<html>\n"
             + "<head><title>foo</title><script>\n"
@@ -467,10 +465,9 @@ public class HtmlPage3Test extends WebDriverTestCase {
      * @throws Exception if an error occurs
      */
     @Test
-    @Alerts(DEFAULT = "Something",
-            FF60 = "error",
-            IE = "error")
-    @NotYetImplemented({IE, FF60})
+    @Alerts(DEFAULT = "error",
+            CHROME = "Something")
+    @NotYetImplemented({IE, FF})
     public void shouldBeAbleToFindElementByXPathInXmlDocument() throws Exception {
         final String html = "<?xml version='1.0' encoding='UTF-8'?>\n"
             + "<html xmlns='http://www.w3.org/1999/xhtml'\n"

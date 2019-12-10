@@ -253,9 +253,8 @@ public class DocumentTest extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts(DEFAULT = {"0", "3", "3", "true"},
-            CHROME = {"0", "0", "0", "true"},
-            FF60 = {"0", "0", "0", "true"})
+    @Alerts(DEFAULT = {"0", "0", "0", "true"},
+            IE = {"0", "3", "3", "true"})
     public void applets() throws Exception {
         final String html =
             "<html>\n"
@@ -1236,7 +1235,7 @@ public class DocumentTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = {"HTML", "HEAD", "TITLE", "SCRIPT", "BODY"},
-            FF = {"all == null", "all == null", "all == null", "all == null", "all == null"})
+            FF60 = {"all == null", "all == null", "all == null", "all == null", "all == null"})
     public void all_WithParentheses() throws Exception {
         final String html
             = "<html><head><title>First</title><script>\n"
@@ -2427,7 +2426,7 @@ public class DocumentTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = {"null", "text1", "not available"},
-            IE = {"null", "text1", "text2", "onfocus text2"})
+            IE = {"null", "text1", "onfocus text2", "text2", "onfocus text2"})
     @NotYetImplemented(IE)
     // the execution order is not yet correct: the onfocus is called during onload not after it
     public void setActive() throws Exception {
@@ -2453,7 +2452,12 @@ public class DocumentTest extends WebDriverTestCase {
         Thread.sleep(100);
 
         driver.findElement(By.id("text1")).click();
-        verifyAlerts(driver, alerts[1], alerts[2]);
+        if (alerts.length > 3) {
+            verifyAlerts(driver, alerts[1], alerts[2], alerts[3], alerts[4]);
+        }
+        else {
+            verifyAlerts(driver, alerts[1], alerts[2]);
+        }
     }
 
     /**
@@ -2510,6 +2514,8 @@ public class DocumentTest extends WebDriverTestCase {
     @Test
     @Alerts({"books", "books", "3", "#text", "0"})
     public void createAttribute() throws Exception {
+        shutDownRealIE();
+
         final String html = "<html><head><title>foo</title><script>\n"
             + "  function test() {\n"
             + "    var doc = " + callLoadXMLDocumentFromFile("'" + URL_SECOND + "'") + ";\n"
@@ -2544,6 +2550,8 @@ public class DocumentTest extends WebDriverTestCase {
     @Test
     @Alerts({"0", "1"})
     public void getElementsByTagNameNS() throws Exception {
+        shutDownRealIE();
+
         final String html = "<html><head><title>foo</title><script>\n"
             + "  function test() {\n"
             + "    var doc = " + callLoadXMLDocumentFromFile("'" + URL_SECOND + "'") + ";\n"

@@ -15,6 +15,7 @@
 package com.gargoylesoftware.htmlunit.javascript.host.html;
 
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.CHROME;
+import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF68;
 
 import com.gargoylesoftware.htmlunit.html.HtmlSlot;
 import com.gargoylesoftware.htmlunit.javascript.configuration.JsxClass;
@@ -24,8 +25,9 @@ import com.gargoylesoftware.htmlunit.javascript.configuration.JsxConstructor;
  * A JavaScript object for {@code HTMLSlotElement}.
  *
  * @author Ahmed Ashour
+ * @author Ronald Brill
  */
-@JsxClass(domClass = HtmlSlot.class, value = CHROME)
+@JsxClass(domClass = HtmlSlot.class, value = {CHROME, FF68})
 public class HTMLSlotElement extends HTMLElement {
 
     /**

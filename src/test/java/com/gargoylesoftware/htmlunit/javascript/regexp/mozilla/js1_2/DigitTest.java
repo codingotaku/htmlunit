@@ -26,6 +26,7 @@ import com.gargoylesoftware.htmlunit.WebDriverTestCase;
  *
  * @author Ahmed Ashour
  * @author Frank Danek
+ * @author Ronald Brill
  */
 @RunWith(BrowserRunner.class)
 public class DigitTest extends WebDriverTestCase {
@@ -34,7 +35,7 @@ public class DigitTest extends WebDriverTestCase {
         + "\\f\\n\\r\\t\\v~`!@#$%^&*()-+={[}]|\\\\:;\\'<,>./? \"";
 
     private static final String non_digits_expected = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        + "\f\n\r\t\u000B~`!@#$%^&*()-+={[}]|\\:;\'<,>./? \"";
+        + "\f\\n\\r\t\u000B~`!@#$%^&*()-+={[}]|\\:;\'<,>./? \"";
 
     private static final String digits = "1234567890";
 
@@ -143,12 +144,12 @@ public class DigitTest extends WebDriverTestCase {
                     break;
 
                 case 'n':
-                    expected = "\n";
+                    expected = "\\n";
                     input = "\\" + ch;
                     break;
 
                 case 'r':
-                    expected = "\r";
+                    expected = "\\r";
                     input = "\\" + ch;
                     break;
 
@@ -176,11 +177,14 @@ public class DigitTest extends WebDriverTestCase {
     }
 
     private void test(final String initialScript, final String script) throws Exception {
-        String html = "<html><head><title>foo</title><script>\n";
+        String html = "<html><head><title></title><script>\n";
         if (initialScript != null) {
             html += initialScript + ";\n";
         }
-        html += "  alert(" + script + ");\n"
+        html += "  var txt = '' + " + script + ";\n"
+            + "  txt = txt.replace('\\r', '\\\\r');\n"
+            + "  txt = txt.replace('\\n', '\\\\n');\n"
+            + "  alert(txt);\n"
             + "</script></head><body>\n"
             + "</body></html>";
         loadPageWithAlerts2(html);

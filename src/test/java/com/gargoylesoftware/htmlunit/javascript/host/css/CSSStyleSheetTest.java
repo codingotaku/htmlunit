@@ -194,7 +194,7 @@ public class CSSStyleSheetTest extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = {"1", "false", "-1", "div", "color: red;", "2"},
             IE = {"1", "false", "1", "div", "color: red;", "2"},
-            FF = {"1", "true", "1"})
+            FF60 = {"1", "true", "1"})
     public void addRule() throws Exception {
         final String html = "<html>\n"
             + "<head>\n"
@@ -227,7 +227,7 @@ public class CSSStyleSheetTest extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = {"2", "-1", "div", "", "3"},
             IE = {"2", "2", "div", "", "3"},
-            FF = {"2", "2"})
+            FF60 = {"2", "2"})
     public void addRuleInvalidRule() throws Exception {
         final String html = "<html>\n"
                 + "<head>\n"
@@ -259,7 +259,7 @@ public class CSSStyleSheetTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = "exception",
-            FF = "added")
+            FF60 = "added")
     public void addInvalidRule() throws Exception {
         final String html = "<html><head><title>foo</title><script>\n"
             + "function doTest() {\n"
@@ -373,7 +373,7 @@ public class CSSStyleSheetTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = {"2", "false", "false", "undefined", "1", "div", "color: red;"},
-            FF = {"2", "false", "true", "undefined", "1", "div", "color: red;"})
+            FF60 = {"2", "false", "true", "undefined", "1", "div", "color: red;"})
     public void removeRule_deleteRule() throws Exception {
         final String html = "<html><head><title>foo</title><script>\n"
             + "function doTest() {\n"
@@ -1651,10 +1651,10 @@ public class CSSStyleSheetTest extends WebDriverTestCase {
     @Test
     @Alerts("rgb(255, 0, 0)")
     public void veryBig() throws Exception {
-        getWebDriver();
+        final WebDriver driver = getWebDriver();
 
         int maxInMemory = 0;
-        final WebClient webClient = getWebWindowOf((HtmlUnitDriver) getWebDriver()).getWebClient();
+        final WebClient webClient = getWebWindowOf((HtmlUnitDriver) driver).getWebClient();
         if (webClient != null) {
             maxInMemory = webClient.getOptions().getMaxInMemory();
         }
@@ -1693,7 +1693,7 @@ public class CSSStyleSheetTest extends WebDriverTestCase {
         headers1.add(new NameValuePair("Location", "style2.css"));
         conn.setResponse(new URL(URL_FIRST, "style.css"), "", 302, "Moved", MimeType.TEXT_CSS, headers1);
 
-        final WebDriver driver = loadPage2(html, new URL(URL_FIRST, "test.html"));
+        loadPage2(html, new URL(URL_FIRST, "test.html"));
         driver.findElement(By.linkText("second page")).click();
         verifyAlerts(driver, getExpectedAlerts());
     }

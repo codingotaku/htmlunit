@@ -14,9 +14,6 @@
  */
 package com.gargoylesoftware.htmlunit.javascript.host.media;
 
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF;
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF52;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -92,7 +89,7 @@ public class AudioContextTest extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = {"AudioContext prep done", "Error with decoding audio data"},
             IE = "AudioContext not available")
-    @BuggyWebDriver(FF)
+    @BuggyWebDriver(FF = "Todo")
     public void decodeAudioData() throws Exception {
         final String html
             = "<html>\n"
@@ -127,7 +124,6 @@ public class AudioContextTest extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = {"AudioContext prep done", "Error with decoding audio data"},
             IE = "AudioContext not available")
-    @BuggyWebDriver(FF52)
     public void decodeAudioData2() throws Exception {
         final String html
             = "<html>\n"

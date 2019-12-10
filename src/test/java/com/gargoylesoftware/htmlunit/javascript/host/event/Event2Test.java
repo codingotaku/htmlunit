@@ -15,7 +15,6 @@
 package com.gargoylesoftware.htmlunit.javascript.host.event;
 
 import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.CHROME;
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF;
 import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.IE;
 
 import org.junit.Test;
@@ -47,14 +46,15 @@ public class Event2Test extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = "[object Event] change b:true c:false [select] [-]"
                 + " [object MouseEvent] click b:true c:true [clickMe] [1]",
+            CHROME = "[object Event] change b:true c:false [select] [-]"
+                + " [object MouseEvent] click b:true c:true [select] [1]",
+            IE = "[object Event] change b:true c:false [select] [-]"
+                + " [object PointerEvent] click b:true c:true [select] [1]")
+    @BuggyWebDriver(FF = "[object Event] change b:true c:true [select] [-]"
+                + " [object Event] click b:true c:true [select] [-]",
             IE = "[object Event] change b:true c:false [select] [-]"
                 + " [object MouseEvent] click b:true c:true [select] [1]")
-    @BuggyWebDriver({CHROME, FF})
-    // FFDriver wrongly generates a "[object MouseEvent] click b:true c:true [select] [1]" first that doesn't occur
-    // manually
-    // ChromeDriver wrongly generates a "[object MouseEvent] click b:true c:true [select] [1]" instead of "clickMe"
-    @NotYetImplemented(IE)
-    // No idea why IE fires a MouseEvent here instead of a PointerEvent
+    @NotYetImplemented(CHROME)
     public void optionClick() throws Exception {
         final String firstSnippet = "       <select name='select' id='select' size='2'\n";
         final String secondSnippet = ">\n"
@@ -73,7 +73,8 @@ public class Event2Test extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = "[object MouseEvent] click b:true c:true [clickMe] [1]",
             IE = "")
-    @BuggyWebDriver(CHROME)
+    @BuggyWebDriver(CHROME = "",
+                    FF = "")
     // ChromeDriver does not generate a "[object MouseEvent] click b:true c:true [clickMe] [1]" but it occurs manually
     public void optionClick2() throws Exception {
         final String firstSnippet = "       <select name='select' id='select' size='2'>\n"
@@ -219,6 +220,7 @@ public class Event2Test extends WebDriverTestCase {
         final String html =
                 "<html>\n"
                 + "<head>\n"
+                + "  <title></title>\n"
                 + "  <script type='text/javascript'>\n"
                 + "  <!--\n"
                 + "    function dumpEvent(event) {\n"
@@ -595,7 +597,7 @@ public class Event2Test extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = {"false", "false", "SPAN"},
-            FF = {"false", "true", "SPAN"})
+            FF60 = {"false", "true", "SPAN"})
     public void eventTransmission() throws Exception {
         final String html =
             "<html>\n"
@@ -861,7 +863,7 @@ public class Event2Test extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = "[object Event]",
-            FF = "undefined")
+            FF60 = "undefined")
     public void windowEvent() throws Exception {
         final String html = "<html>\n"
                 + "<head>\n"

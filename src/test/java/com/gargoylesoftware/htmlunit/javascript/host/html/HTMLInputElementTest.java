@@ -83,10 +83,7 @@ public class HTMLInputElementTest extends WebDriverTestCase {
     /**
      * @throws Exception if the test fails
      */
-    @Alerts(FF52 = {"error fileupload1", "abc", "abc", "abc", "", "abc", "", "", "abc", "abc",
-                        "abc", "abc", "abc", "abc", "abc", "abc", "#000000", "abc", "abc", "abc", "abc", "abc",
-                        "abc", "", "50", "abc", "abc", "abc", "abc"},
-            FF60 = {"error fileupload1", "abc", "abc", "abc", "", "abc", "", "", "abc", "abc",
+    @Alerts(FF = {"error fileupload1", "abc", "abc", "abc", "", "abc", "", "", "abc", "abc",
                         "abc", "abc", "abc", "abc", "abc", "abc", "#000000", "", "abc", "abc", "", "abc",
                         "abc", "", "50", "abc", "abc", "abc", "abc"},
             CHROME = {"error fileupload1", "abc", "abc", "abc", "", "abc", "", "", "abc", "abc",
@@ -117,8 +114,8 @@ public class HTMLInputElementTest extends WebDriverTestCase {
     /**
      * @throws Exception if the test fails
      */
-    @Alerts(FF52 = {"error fileupload1", "  ", "  ", "  ", "", "  ", "", "", "  ", "  ",
-                        "  ", "  ", "  ", "  ", "  ", "  ", "#000000", "  ", "  ", "  ", "  ", "  ",
+    @Alerts(FF68 = {"error fileupload1", "  ", "  ", "  ", "", "  ", "", "", "  ", "  ",
+                        "  ", "  ", "  ", "  ", "  ", "  ", "#000000", "", "  ", "  ", "", "  ",
                         "  ", "", "50", "  ", "", "  ", ""},
             FF60 = {"error fileupload1", "  ", "  ", "  ", "", "  ", "", "", "  ", "  ",
                         "  ", "  ", "  ", "  ", "  ", "  ", "#000000", "", "  ", "  ", "", "  ",
@@ -137,10 +134,7 @@ public class HTMLInputElementTest extends WebDriverTestCase {
     /**
      * @throws Exception if the test fails
      */
-    @Alerts(FF52 = {"error fileupload1", "12", "12", "12", "", "12", "", "", "12", "12",
-                        "12", "12", "12", "12", "12", "12", "#000000", "12", "12", "12", "12", "12",
-                        "12", "12", "12", "12", "12", "12", "12"},
-            FF60 = {"error fileupload1", "12", "12", "12", "", "12", "", "", "12", "12",
+    @Alerts(FF = {"error fileupload1", "12", "12", "12", "", "12", "", "", "12", "12",
                         "12", "12", "12", "12", "12", "12", "#000000", "", "12", "12", "", "12",
                         "12", "12", "12", "12", "12", "12", "12"},
             CHROME = {"error fileupload1", "12", "12", "12", "", "12", "", "", "12", "12",
@@ -281,12 +275,7 @@ public class HTMLInputElementTest extends WebDriverTestCase {
                         "submit", "submit", "text", "textarea", "color", "date", "text",
                         "datetime-local", "time", "week", "month", "number",
                         "range", "search", "email", "tel", "url"},
-            FF52 = {"button", "button", "checkbox", "file", "hidden", "select-one", "select-multiple",
-                        "password", "radio", "reset", "reset",
-                        "submit", "submit", "text", "textarea", "color", "text", "text",
-                        "text", "text", "text", "text", "number", "range",
-                        "search", "email", "tel", "url"},
-            FF60 = {"button", "button", "checkbox", "file", "hidden", "select-one", "select-multiple",
+            FF = {"button", "button", "checkbox", "file", "hidden", "select-one", "select-multiple",
                         "password", "radio", "reset", "reset",
                         "submit", "submit", "text", "textarea", "color", "date", "text",
                         "text", "time", "text", "text", "number", "range",
@@ -372,10 +361,7 @@ public class HTMLInputElementTest extends WebDriverTestCase {
     /**
      * @throws Exception if the test fails
      */
-    @Alerts(FF52 = {"abc", "abc", "abc", "", "abc", "foo", "", "abc", "abc",
-                        "abc", "abc", "abc", "abc", "abc", "foo", "#000000", "abc", "abc",
-                        "abc", "abc", "abc", "abc", "", "50", "abc", "abc", "abc", "abc"},
-            FF60 = {"abc", "abc", "abc", "", "abc", "foo", "", "abc", "abc",
+    @Alerts(FF = {"abc", "abc", "abc", "", "abc", "foo", "", "abc", "abc",
                     "abc", "abc", "abc", "abc", "abc", "foo", "#000000", "", "abc",
                     "abc", "", "abc", "abc", "", "50", "abc", "abc", "abc", "abc"},
             CHROME = {"abc", "abc", "abc", "", "abc", "foo", "", "abc", "abc",
@@ -762,16 +748,16 @@ public class HTMLInputElementTest extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts("foo")
+    @Alerts({"foo", "from button"})
     public void onChange() throws Exception {
         final String html
             = HtmlPageTest.STANDARDS_MODE_PREFIX_
-            + "<html><head><title>foo</title>\n"
+            + "<html><head><title></title>\n"
             + "</head><body>\n"
             + "<p>hello world</p>\n"
             + "<form name='form1'>\n"
-            + "  <input type='text' name='text1' onchange='alert(this.value)'>\n"
-            + "<input name='myButton' type='button' onclick='document.form1.text1.value=\"from button\"'>\n"
+            + "  <input type='text' name='text1' onchange='document.title += this.value'>\n"
+            + "  <input name='myButton' type='button' onclick='document.form1.text1.value=\"from button\"'>\n"
             + "</form>\n"
             + "</body></html>";
 
@@ -781,20 +767,20 @@ public class HTMLInputElementTest extends WebDriverTestCase {
         textinput.sendKeys("foo");
         final WebElement button = driver.findElement(By.name("myButton"));
         button.click();
-        verifyAlerts(driver, getExpectedAlerts());
-        Thread.sleep(10);
-        assertEquals("from button", textinput.getAttribute("value"));
+        assertTitle(driver, getExpectedAlerts()[0]);
+        Thread.sleep(100);
+        assertEquals(getExpectedAlerts()[1], textinput.getAttribute("value"));
     }
 
     /**
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts("foo")
+    @Alerts({"foo", "from button"})
     public void onChangeSetByJavaScript() throws Exception {
         final String html
             = HtmlPageTest.STANDARDS_MODE_PREFIX_
-            + "<html><head><title>foo</title>\n"
+            + "<html><head><title></title>\n"
             + "</head><body>\n"
             + "<p>hello world</p>\n"
             + "<form name='form1'>\n"
@@ -802,7 +788,7 @@ public class HTMLInputElementTest extends WebDriverTestCase {
             + "  <input name='myButton' type='button' onclick='document.form1.text1.value=\"from button\"'>\n"
             + "</form>\n"
             + "<script>\n"
-            + "  document.getElementById('text1').onchange = function(event) { alert(this.value) };\n"
+            + "  document.getElementById('text1').onchange = function(event) { document.title += this.value; };\n"
             + "</script>\n"
             + "</body></html>";
 
@@ -812,10 +798,10 @@ public class HTMLInputElementTest extends WebDriverTestCase {
         textinput.sendKeys("foo");
         final WebElement button = driver.findElement(By.name("myButton"));
         button.click();
-        verifyAlerts(driver, getExpectedAlerts());
+        assertTitle(driver, getExpectedAlerts()[0]);
 
         Thread.sleep(100);
-        assertEquals("from button", textinput.getAttribute("value"));
+        assertEquals(getExpectedAlerts()[1], textinput.getAttribute("value"));
     }
 
     /**
@@ -1694,9 +1680,8 @@ public class HTMLInputElementTest extends WebDriverTestCase {
      * @throws Exception if an error occurs
      */
     @Test
-    @Alerts(DEFAULT = {"undefined", "undefined", "undefined", "undefined", "undefined", "undefined"},
-            CHROME = {"0", "2", "1", "2", "1", "1"},
-            FF60 = {"0", "2", "1", "2", "1", "1"})
+    @Alerts(DEFAULT = {"0", "2", "1", "2", "1", "1"},
+            IE = {"undefined", "undefined", "undefined", "undefined", "undefined", "undefined"})
     public void labels() throws Exception {
         final String html =
             "<html><head>\n"
@@ -1733,7 +1718,8 @@ public class HTMLInputElementTest extends WebDriverTestCase {
      */
     @Test
     @Alerts(CHROME = {"169", "17", "169", "17", "13", "13", "13", "13"},
-            FF = {"141", "21", "141", "21", "13", "13", "13", "13"},
+            FF60 = {"141", "21", "141", "21", "13", "13", "13", "13"},
+            FF68 = {"141", "20", "141", "20", "13", "13", "13", "13"},
             IE = {"143", "19", "145", "20", "13", "13", "13", "13"})
     @NotYetImplemented(IE)
     public void defaultClientWidthHeight() throws Exception {

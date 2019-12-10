@@ -14,8 +14,6 @@
  */
 package com.gargoylesoftware.htmlunit.javascript.host.html;
 
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF52;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -2363,6 +2361,8 @@ public class HTMLSelectElementTest extends WebDriverTestCase {
      */
     @Test
     @Alerts("mouse over")
+    @BuggyWebDriver(FF60 = "mouse overmouse overmouse overmouse over",
+            FF68 = "mouse overmouse overmouse over")
     public void mouseOver() throws Exception {
         final String html =
             "<html>\n"
@@ -2396,6 +2396,7 @@ public class HTMLSelectElementTest extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = "",
             FF = "mouse over")
+    @BuggyWebDriver(FF = "mouse overmouse overmouse overmouse overmouse over")
     public void mouseOverDisabledSelect() throws Exception {
         final String html =
             "<html>\n"
@@ -2429,7 +2430,7 @@ public class HTMLSelectElementTest extends WebDriverTestCase {
     @Test
     @Alerts(DEFAULT = {"undefined", "undefined", "undefined", "undefined", "undefined", "undefined"},
             CHROME = {"0", "2", "1", "2", "1", "1"},
-            FF60 = {"0", "2", "1", "2", "1", "1"})
+            FF = {"0", "2", "1", "2", "1", "1"})
     public void labels() throws Exception {
         final String html =
             "<html><head>\n"
@@ -2636,7 +2637,6 @@ public class HTMLSelectElementTest extends WebDriverTestCase {
      */
     @Test
     // https://github.com/mozilla/geckodriver/issues/584
-    @BuggyWebDriver(FF52)
     public void optionClickActions() throws Exception {
         final String html
             = "<html><body>\n"

@@ -17,13 +17,11 @@ package com.gargoylesoftware.htmlunit.javascript.host.dom;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_ONCLOSE_DOCUMENT_CREATE_NOT_SUPPORTED;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_ONPOPSTATE_DOCUMENT_CREATE_NOT_SUPPORTED;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_BEFOREUNLOADEVENT;
-import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_FOCUSEVENT;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_HASHCHANGEEVENT;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_KEY_EVENTS;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_MOUSEWHEELEVENT;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_POINTEREVENT;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_PROGRESSEVENT;
-import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_SVGZOOMEVENT;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.EVENT_TYPE_WHEELEVENT;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.HTMLDOCUMENT_APPLETS_NODELIST;
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.HTMLDOCUMENT_CHARSET_LOWERCASE;
@@ -37,7 +35,6 @@ import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.JS_TREEWALKER
 import static com.gargoylesoftware.htmlunit.BrowserVersionFeatures.QUERYSELECTORALL_NOT_IN_QUIRKS;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.CHROME;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF;
-import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF52;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.FF60;
 import static com.gargoylesoftware.htmlunit.javascript.configuration.SupportedBrowser.IE;
 import static com.gargoylesoftware.htmlunit.util.StringUtils.parseHttpDate;
@@ -100,8 +97,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlUnknownElement;
 import com.gargoylesoftware.htmlunit.html.UnknownElementFactory;
 import com.gargoylesoftware.htmlunit.html.impl.SimpleRange;
 import com.gargoylesoftware.htmlunit.javascript.SimpleScriptable;
-import com.gargoylesoftware.htmlunit.javascript.configuration.CanSetReadOnly;
-import com.gargoylesoftware.htmlunit.javascript.configuration.CanSetReadOnlyStatus;
 import com.gargoylesoftware.htmlunit.javascript.configuration.JsxClass;
 import com.gargoylesoftware.htmlunit.javascript.configuration.JsxConstructor;
 import com.gargoylesoftware.htmlunit.javascript.configuration.JsxFunction;
@@ -913,7 +908,6 @@ public class Document extends Node {
      * @return this document's {@code body} element
      */
     @JsxGetter({CHROME, IE})
-    @CanSetReadOnly(CanSetReadOnlyStatus.EXCEPTION)
     public HTMLElement getBody() {
         final Page page = getPage();
         if (page instanceof HtmlPage) {
@@ -1208,22 +1202,19 @@ public class Document extends Node {
                 && ("Events".equals(eventType)
                 || "KeyEvents".equals(eventType) && getBrowserVersion().hasFeature(EVENT_TYPE_KEY_EVENTS)
                 || "HashChangeEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_HASHCHANGEEVENT)
+                        && getBrowserVersion().hasFeature(EVENT_TYPE_HASHCHANGEEVENT)
                 || "BeforeUnloadEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_BEFOREUNLOADEVENT)
+                        && getBrowserVersion().hasFeature(EVENT_TYPE_BEFOREUNLOADEVENT)
                 || "MouseWheelEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_MOUSEWHEELEVENT)
+                        && getBrowserVersion().hasFeature(EVENT_TYPE_MOUSEWHEELEVENT)
                 || "PointerEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_POINTEREVENT)
+                        && getBrowserVersion().hasFeature(EVENT_TYPE_POINTEREVENT)
                 || "PopStateEvent".equals(eventType)
                 || "ProgressEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_PROGRESSEVENT)
+                        && getBrowserVersion().hasFeature(EVENT_TYPE_PROGRESSEVENT)
                 || "FocusEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_FOCUSEVENT)
-                || "SVGZoomEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_SVGZOOMEVENT)
                 || "WheelEvent".equals(eventType)
-                    && getBrowserVersion().hasFeature(EVENT_TYPE_WHEELEVENT))) {
+                        && getBrowserVersion().hasFeature(EVENT_TYPE_WHEELEVENT))) {
             clazz = SUPPORTED_VENDOR_EVENT_TYPE_MAP.get(eventType);
 
             if (PopStateEvent.class == clazz
@@ -3018,7 +3009,7 @@ public class Document extends Node {
      * Returns the {@code onpointerlockchange} event handler for this element.
      * @return the {@code onpointerlockchange} event handler for this element
      */
-    @JsxGetter({CHROME, FF52})
+    @JsxGetter(CHROME)
     public Function getOnpointerlockchange() {
         return getEventHandler("pointerlockchange");
     }
@@ -3027,7 +3018,7 @@ public class Document extends Node {
      * Sets the {@code onpointerlockchange} event handler for this element.
      * @param onpointerlockchange the {@code onpointerlockchange} event handler for this element
      */
-    @JsxSetter({CHROME, FF52})
+    @JsxSetter(CHROME)
     public void setOnpointerlockchange(final Object onpointerlockchange) {
         setEventHandler("pointerlockchange", onpointerlockchange);
     }
@@ -3036,7 +3027,7 @@ public class Document extends Node {
      * Returns the {@code onpointerlockerror} event handler for this element.
      * @return the {@code onpointerlockerror} event handler for this element
      */
-    @JsxGetter({CHROME, FF52})
+    @JsxGetter(CHROME)
     public Function getOnpointerlockerror() {
         return getEventHandler("pointerlockerror");
     }
@@ -3045,7 +3036,7 @@ public class Document extends Node {
      * Sets the {@code onpointerlockerror} event handler for this element.
      * @param onpointerlockerror the {@code onpointerlockerror} event handler for this element
      */
-    @JsxSetter({CHROME, FF52})
+    @JsxSetter(CHROME)
     public void setOnpointerlockerror(final Object onpointerlockerror) {
         setEventHandler("pointerlockerror", onpointerlockerror);
     }
@@ -3288,7 +3279,7 @@ public class Document extends Node {
      * Returns the {@code onselectionchange} event handler for this element.
      * @return the {@code onselectionchange} event handler for this element
      */
-    @JsxGetter({CHROME, IE, FF52})
+    @JsxGetter({CHROME, IE})
     public Function getOnselectionchange() {
         return getEventHandler("selectionchange");
     }
@@ -3297,7 +3288,7 @@ public class Document extends Node {
      * Sets the {@code onselectionchange} event handler for this element.
      * @param onselectionchange the {@code onselectionchange} event handler for this element
      */
-    @JsxSetter({CHROME, IE, FF52})
+    @JsxSetter({CHROME, IE})
     public void setOnselectionchange(final Object onselectionchange) {
         setEventHandler("selectionchange", onselectionchange);
     }
@@ -3306,7 +3297,7 @@ public class Document extends Node {
      * Returns the {@code onselectstart} event handler for this element.
      * @return the {@code onselectstart} event handler for this element
      */
-    @JsxGetter({CHROME, IE, FF52})
+    @JsxGetter({CHROME, IE})
     public Function getOnselectstart() {
         return getEventHandler("selectstart");
     }
@@ -3315,7 +3306,7 @@ public class Document extends Node {
      * Sets the {@code onselectstart} event handler for this element.
      * @param onselectstart the {@code onselectstart} event handler for this element
      */
-    @JsxSetter({CHROME, IE, FF52})
+    @JsxSetter({CHROME, IE})
     public void setOnselectstart(final Object onselectstart) {
         setEventHandler("selectstart", onselectstart);
     }
@@ -3414,7 +3405,7 @@ public class Document extends Node {
      * Returns the {@code ontoggle} event handler for this element.
      * @return the {@code ontoggle} event handler for this element
      */
-    @JsxGetter({CHROME, FF52})
+    @JsxGetter(CHROME)
     public Function getOntoggle() {
         return getEventHandler("toggle");
     }
@@ -3423,7 +3414,7 @@ public class Document extends Node {
      * Sets the {@code ontoggle} event handler for this element.
      * @param ontoggle the {@code ontoggle} event handler for this element
      */
-    @JsxSetter({CHROME, FF52})
+    @JsxSetter(CHROME)
     public void setOntoggle(final Object ontoggle) {
         setEventHandler("toggle", ontoggle);
     }
@@ -4131,186 +4122,6 @@ public class Document extends Node {
     }
 
     /**
-     * Returns the {@code onanimationend} event handler.
-     * @return the {@code onanimationend} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnanimationend() {
-        return getEventHandler("animationend");
-    }
-
-    /**
-     * Sets the {@code onanimationend} event handler.
-     * @param animationend the {@code onanimationend} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnanimationend(final Object animationend) {
-        setEventHandler("animationend", animationend);
-    }
-
-    /**
-     * Returns the {@code onanimationiteration} event handler.
-     * @return the {@code onanimationiteration} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnanimationiteration() {
-        return getEventHandler("animationiteration");
-    }
-
-    /**
-     * Sets the {@code onanimationiteration} event handler.
-     * @param animationiteration the {@code onanimationiteration} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnanimationiteration(final Object animationiteration) {
-        setEventHandler("animationiteration", animationiteration);
-    }
-
-    /**
-     * Returns the {@code onanimationstart} event handler.
-     * @return the {@code onanimationstart} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnanimationstart() {
-        return getEventHandler("animationstart");
-    }
-
-    /**
-     * Sets the {@code onanimationstart} event handler.
-     * @param animationstart the {@code onanimationstart} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnanimationstart(final Object animationstart) {
-        setEventHandler("animationstart", animationstart);
-    }
-
-    /**
-     * Returns the {@code ondragexit} event handler.
-     * @return the {@code ondragexit} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOndragexit() {
-        return getEventHandler("dragexit");
-    }
-
-    /**
-     * Sets the {@code ondragexit} event handler.
-     * @param dragexit the {@code ondragexit} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOndragexit(final Object dragexit) {
-        setEventHandler("dragexit", dragexit);
-    }
-
-    /**
-     * Returns the {@code onloadend} event handler.
-     * @return the {@code onloadend} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnloadend() {
-        return getEventHandler("loadend");
-    }
-
-    /**
-     * Sets the {@code onloadend} event handler.
-     * @param loadend the {@code onloadend} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnloadend(final Object loadend) {
-        setEventHandler("loadend", loadend);
-    }
-
-    /**
-     * Returns the {@code ontransitionend} event handler.
-     * @return the {@code ontransitionend} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOntransitionend() {
-        return getEventHandler("transitionend");
-    }
-
-    /**
-     * Sets the {@code ontransitionend} event handler.
-     * @param transitionend the {@code ontransitionend} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOntransitionend(final Object transitionend) {
-        setEventHandler("transitionend", transitionend);
-    }
-
-    /**
-     * Returns the {@code onwebkitanimationend} event handler.
-     * @return the {@code onwebkitanimationend} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnwebkitanimationend() {
-        return getEventHandler("webkitanimationend");
-    }
-
-    /**
-     * Sets the {@code onwebkitanimationend} event handler.
-     * @param webkitanimationend the {@code onwebkitanimationend} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnwebkitanimationend(final Object webkitanimationend) {
-        setEventHandler("webkitanimationend", webkitanimationend);
-    }
-
-    /**
-     * Returns the {@code onwebkitanimationiteration} event handler.
-     * @return the {@code onwebkitanimationiteration} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnwebkitanimationiteration() {
-        return getEventHandler("webkitanimationiteration");
-    }
-
-    /**
-     * Sets the {@code onwebkitanimationiteration} event handler.
-     * @param webkitanimationiteration the {@code onwebkitanimationiteration} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnwebkitanimationiteration(final Object webkitanimationiteration) {
-        setEventHandler("webkitanimationiteration", webkitanimationiteration);
-    }
-
-    /**
-     * Returns the {@code onwebkitanimationstart} event handler.
-     * @return the {@code onwebkitanimationstart} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnwebkitanimationstart() {
-        return getEventHandler("webkitanimationstart");
-    }
-
-    /**
-     * Sets the {@code onwebkitanimationstart} event handler.
-     * @param webkitanimationstart the {@code onwebkitanimationstart} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnwebkitanimationstart(final Object webkitanimationstart) {
-        setEventHandler("webkitanimationstart", webkitanimationstart);
-    }
-
-    /**
-     * Returns the {@code onwebkittransitionend} event handler.
-     * @return the {@code onwebkittransitionend} event handler
-     */
-    @JsxGetter(FF52)
-    public Function getOnwebkittransitionend() {
-        return getEventHandler("webkittransitionend");
-    }
-
-    /**
-     * Sets the {@code onwebkittransitionend} event handler.
-     * @param webkittransitionend the {@code onwebkittransitionend} event handler
-     */
-    @JsxSetter(FF52)
-    public void setOnwebkittransitionend(final Object webkittransitionend) {
-        setEventHandler("webkittransitionend", webkittransitionend);
-    }
-
-    /**
      * @return the {@code currentScript}
      */
     @JsxGetter({CHROME, FF})
@@ -4337,5 +4148,13 @@ public class Document extends Node {
             fonts_ = fonts;
         }
         return fonts_;
+    }
+
+    @Override
+    protected boolean isReadOnlySettable(final String name, final Object value) {
+        if ("body".equals(name)) {
+            throw ScriptRuntime.typeError3("msg.set.prop.no.setter", name, getClassName(), Context.toString(value));
+        }
+        return super.isReadOnlySettable(name, value);
     }
 }

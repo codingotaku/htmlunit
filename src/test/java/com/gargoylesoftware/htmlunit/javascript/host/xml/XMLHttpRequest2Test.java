@@ -15,7 +15,7 @@
 package com.gargoylesoftware.htmlunit.javascript.host.xml;
 
 import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.CHROME;
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF60;
+import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF;
 import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.IE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -428,8 +428,9 @@ public class XMLHttpRequest2Test extends WebDriverTestCase {
      * @throws Exception if an error occurs
      */
     @Test
-    @Alerts({"hello", "in timeout"})
-    @BuggyWebDriver(IE)
+    @Alerts("hello in timeout")
+    @BuggyWebDriver(FF68 = "in timeouthello",
+                    IE = "in timeouthello")
     // IEDriver catches "in timeout", "hello" but real IE gets the correct order
     public void xhrCallbackBeforeTimeout() throws Exception {
         final String html = "<html><head><script>\n"
@@ -439,12 +440,12 @@ public class XMLHttpRequest2Test extends WebDriverTestCase {
             + "  xhr.send('');\n"
             + "}\n"
             + "function doTest() {\n"
-            + "  setTimeout(function() { alert('in timeout');}, 5);\n"
+            + "  setTimeout(function() { document.title += ' in timeout'; }, 5);\n"
             + "  wait();\n"
             + "  var xhr2 = new XMLHttpRequest();\n"
             + "  var handler = function() {\n"
             + "    if (xhr2.readyState == 4)\n"
-            + "      alert(xhr2.responseText);\n"
+            + "      document.title += xhr2.responseText;\n"
             + "  }\n"
             + "  xhr2.onreadystatechange = handler;\n"
             + "  xhr2.open('GET', '/foo.txt', true);\n"
@@ -455,7 +456,8 @@ public class XMLHttpRequest2Test extends WebDriverTestCase {
             + "</script></head><body></body></html>";
 
         getMockWebConnection().setDefaultResponse("hello", MimeType.TEXT_PLAIN);
-        loadPageWithAlerts2(html, 2000);
+        final WebDriver driver = loadPage2(html);
+        assertTitle(driver, getExpectedAlerts()[0]);
     }
 
     /**
@@ -950,12 +952,7 @@ public class XMLHttpRequest2Test extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts(DEFAULT = {"", "",
-                "Date XYZ GMT\r\n"
-                + "Content-Type: text/xml;charset=iso-8859-1\r\n"
-                + "Transfer-Encoding: chunked\r\n"
-                + "Server: Jetty(XXX)\r\n"},
-            IE = {"", "",
+    @Alerts(IE = {"", "",
                 "Date XYZ GMT\n"
                 + "Content-Type: text/xml;charset=iso-8859-1\n"
                 + "Transfer-Encoding: chunked\n"
@@ -969,8 +966,13 @@ public class XMLHttpRequest2Test extends WebDriverTestCase {
                 "Content-Type: text/xml;charset=iso-8859-1\n"
                 + "Date XYZ GMT\n"
                 + "Server: Jetty(XXX)\n"
-                + "Transfer-Encoding: chunked\n"})
-    @NotYetImplemented({CHROME, FF60})
+                + "Transfer-Encoding: chunked\n"},
+            FF68 = {"", "",
+                    "content-type: text/xml;charset=iso-8859-1\n"
+                    + "date XYZ GMT\n"
+                    + "server: Jetty(XXX)\n"
+                    + "transfer-encoding: chunked\n"})
+    @NotYetImplemented({CHROME, FF})
     public void getAllResponseHeaders() throws Exception {
         final String html =
                 "<html>\n"

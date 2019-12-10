@@ -156,7 +156,7 @@ public class NotYetImplementedTest {
         int count = 0;
         int countIE = 0;
         int countFF60 = 0;
-        int countFF52 = 0;
+        int countFF68 = 0;
         int countChrome = 0;
         for (final String entry : entries_) {
             final String[] values = entry.split(";");
@@ -181,14 +181,25 @@ public class NotYetImplementedTest {
                 else {
                     builder.append("    <td>");
                 }
-                builder.append(fileName);
+                builder.append("<a target='_blank' href='https://github.com/HtmlUnit/htmlunit/blob/master/")
+                        .append(file)
+                        .append("'>")
+                        .append(fileName)
+                        .append("</a>");
                 builder.append("</td>\n");
                 lastFile = file;
             }
             builder.append("    <td>").append(Integer.toString(count++)).append("</td>\n");
-            builder.append("    <td><a href='https://sourceforge.net/p/htmlunit/code/" + "HEAD"
-                    + "/tree/trunk/htmlunit/" + file + "#l" + line + "'>").append(method).append("</a> ")
-                    .append(browser).append("</td>\n");
+
+            builder.append("    <td><a target='_blank' href='https://github.com/HtmlUnit/htmlunit/blob/master/")
+                    .append(file)
+                    .append("#L")
+                    .append(line)
+                    .append("'>")
+                    .append(method)
+                    .append("</a> ")
+                    .append(browser)
+                    .append("</td>\n");
             builder.append("    <td class='numeric'>").append(line).append("</td>\n");
             builder.append("    <td>").append(description).append("</td>\n");
             builder.append("  </tr>\n");
@@ -200,14 +211,14 @@ public class NotYetImplementedTest {
             if (browser.contains("FF60")) {
                 countFF60++;
             }
-            if (browser.contains("FF52")) {
-                countFF52++;
+            if (browser.contains("FF68")) {
+                countFF68++;
             }
             if (!browser.contains("FF60")
-                    && !browser.contains("FF52")
+                    && !browser.contains("FF68")
                     && browser.contains("FF")) {
                 countFF60++;
-                countFF52++;
+                countFF68++;
             }
             if (browser.contains("CHROME")) {
                 countChrome++;
@@ -215,7 +226,7 @@ public class NotYetImplementedTest {
             if (browser.contains("All")) {
                 countIE++;
                 countFF60++;
-                countFF52++;
+                countFF68++;
                 countChrome++;
             }
         }
@@ -239,8 +250,8 @@ public class NotYetImplementedTest {
         overview.append("  </tr>\n");
 
         overview.append("  <tr>\n");
-        overview.append("    <td class='numeric'>").append(countFF52).append("</td>\n");
-        overview.append("    <td>for FF52</td>\n");
+        overview.append("    <td class='numeric'>").append(countFF68).append("</td>\n");
+        overview.append("    <td>for FF68</td>\n");
         overview.append("  </tr>\n");
 
         overview.append("  <tr>\n");

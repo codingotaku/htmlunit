@@ -14,9 +14,6 @@
  */
 package com.gargoylesoftware.htmlunit.html;
 
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.FF52;
-import static com.gargoylesoftware.htmlunit.BrowserRunner.TestedBrowser.IE;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -29,6 +26,7 @@ import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 
 import com.gargoylesoftware.htmlunit.BrowserRunner;
+import com.gargoylesoftware.htmlunit.BrowserRunner.Alerts;
 import com.gargoylesoftware.htmlunit.BrowserRunner.BuggyWebDriver;
 import com.gargoylesoftware.htmlunit.WebDriverTestCase;
 
@@ -44,7 +42,8 @@ public class HtmlSelect2Test extends WebDriverTestCase {
      * @exception Exception If the test fails
      */
     @Test
-    @BuggyWebDriver({FF52, IE})
+    @Alerts({"false", "false", "false", "true"})
+    @BuggyWebDriver(IE = {"false", "false", "true", "false"})
     public void select() throws Exception {
         final String html = "<html><head><title>foo</title></head><body>\n"
             + "<form id='form1'><select name='select1' multiple>\n"
@@ -68,17 +67,18 @@ public class HtmlSelect2Test extends WebDriverTestCase {
 
         selectThreeOptions.perform();
 
-        assertFalse(options.get(0).isSelected());
-        assertFalse(options.get(1).isSelected());
-        assertFalse(options.get(2).isSelected());
-        assertTrue(options.get(3).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[0]), options.get(0).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[1]), options.get(1).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[2]), options.get(2).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[3]), options.get(3).isSelected());
     }
 
     /**
      * @exception Exception If the test fails
      */
     @Test
-    @BuggyWebDriver(IE)
+    @Alerts({"false", "true", "true", "true"})
+    @BuggyWebDriver(IE = {"false", "false", "true", "false"})
     public void shiftClick() throws Exception {
         final String html = "<html><head><title>foo</title></head><body>\n"
             + "<form id='form1'><select name='select1' multiple>\n"
@@ -103,17 +103,18 @@ public class HtmlSelect2Test extends WebDriverTestCase {
 
         selectThreeOptions.perform();
 
-        assertFalse(options.get(0).isSelected());
-        assertTrue(options.get(1).isSelected());
-        assertTrue(options.get(2).isSelected());
-        assertTrue(options.get(3).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[0]), options.get(0).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[1]), options.get(1).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[2]), options.get(2).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[3]), options.get(3).isSelected());
     }
 
     /**
      * @exception Exception If the test fails
      */
     @Test
-    @BuggyWebDriver({FF52, IE})
+    @Alerts({"false", "true", "false", "true"})
+    @BuggyWebDriver(IE = {"false", "false", "true", "false"})
     public void controlClick() throws Exception {
         final String html = "<html><head><title>foo</title></head><body>\n"
             + "<form id='form1'><select name='select1' multiple>\n"
@@ -138,9 +139,9 @@ public class HtmlSelect2Test extends WebDriverTestCase {
 
         selectThreeOptions.perform();
 
-        assertFalse(options.get(0).isSelected());
-        assertTrue(options.get(1).isSelected());
-        assertFalse(options.get(2).isSelected());
-        assertTrue(options.get(3).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[0]), options.get(0).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[1]), options.get(1).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[2]), options.get(2).isSelected());
+        assertEquals(Boolean.parseBoolean(getExpectedAlerts()[3]), options.get(3).isSelected());
     }
 }

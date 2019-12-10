@@ -26,7 +26,6 @@ import org.openqa.selenium.interactions.Actions;
 
 import com.gargoylesoftware.htmlunit.BrowserRunner;
 import com.gargoylesoftware.htmlunit.BrowserRunner.Alerts;
-import com.gargoylesoftware.htmlunit.BrowserRunner.BuggyWebDriver;
 import com.gargoylesoftware.htmlunit.BrowserRunner.NotYetImplemented;
 import com.gargoylesoftware.htmlunit.WebDriverTestCase;
 import com.gargoylesoftware.htmlunit.html.HtmlPageTest;
@@ -574,7 +573,7 @@ public class HTMLElement2Test extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = {"0", "18"},
-            FF = {"0", "20"})
+            FF60 = {"0", "20"})
     public void offsetHeight_explicitHeightZero() throws Exception {
         final String html
             = "<html><body>\n"
@@ -591,7 +590,7 @@ public class HTMLElement2Test extends WebDriverTestCase {
      */
     @Test
     @Alerts(DEFAULT = {"75", "2", "5", "20", "50", "50", "18"},
-            FF = {"77", "2", "5", "20", "50", "50", "20"})
+            FF60 = {"77", "2", "5", "20", "50", "50", "20"})
     public void offsetHeight_calculatedBasedOnChildren() throws Exception {
         final String html
             = "<html>\n"
@@ -1417,9 +1416,9 @@ public class HTMLElement2Test extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
-    @Alerts(DEFAULT = {" body1", "", " body1 setActive not available"},
-            IE = {" body1", " text1", " [object HTMLButtonElement]", "text2", "[object Window]", "onfocus text2"})
-    @BuggyWebDriver(IE)
+    @Alerts(DEFAULT = {"First: body1", "Second:", "Second: body1 setActive not available"},
+            IE = {"First: body1", "Second:",
+                    "Second: body1 text1 [object HTMLButtonElement] text2 [object Window] onfocus text2"})
     // alert conflicts with focus/blur
     @NotYetImplemented(IE)
     public void setActiveAndFocus() throws Exception {
@@ -1465,15 +1464,15 @@ public class HTMLElement2Test extends WebDriverTestCase {
 
         try {
             final WebDriver driver = loadPage2(firstHtml);
-            assertTitle(driver, "First:" + getExpectedAlerts()[0]);
+            assertTitle(driver, getExpectedAlerts()[0]);
 
             driver.findElement(By.id("button1")).click();
 
             driver.switchTo().window("second");
-            assertTitle(driver, "Second:" + getExpectedAlerts()[1]);
+            assertTitle(driver, getExpectedAlerts()[1]);
 
             driver.findElement(By.id("button2")).click();
-            assertTitle(driver, "Second:" + getExpectedAlerts()[2]);
+            assertTitle(driver,  getExpectedAlerts()[2]);
         }
         finally {
             shutDownRealIE();
